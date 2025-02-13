@@ -72,10 +72,9 @@ For a typical 2-day workshop. Can be modified for different workshop formats.
 | 10:45 | **R for Data Analysis (Continued)** | continuation of `04-r-data-analysis` |
 | 12:00 | Lunch Break |  |
 | 13:00 | **Writing Reports with R Markdown** | `_episodes_rmd/05-r-markdown.Rmd` |
-| 14:30 | Break |  |
-| 14:45 | **Writing Reports with R Markdown (Continued)** | at end of `05-r-markdown` |
-| 16:00 | Conclusions & Wrap-up |  `_episodes/06-conclusion.md` |
-| 16:15 | Exit Survey |   |
+| 14:15 | Break |  |
+| 14:30 | **Basic Statistics in R** | `_episodes_rmd/06-r-statistics.Rmd` |
+| 16:15 | Conclusions & Wrap-up |  `_episodes/07-conclusion.md` |
 | 16:30 | End | |
 
 ## Helpful links

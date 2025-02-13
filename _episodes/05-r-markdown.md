@@ -34,7 +34,7 @@ keypoints:
     + [Text](#text)
 1. [Starting the report](#starting-the-report)
 1. [Formatting](#formatting)
-1. [Knitting to PDF](#pdf)
+1. [Knitting to PDF](#knitting-to-pdf)
 
 Recall that our  goal is to generate a report which analyses how environmental conditions change microbial communities in Lake Ontario.
 
@@ -317,12 +317,12 @@ OK, now that we know how to make headers, let's practice some more Markdown synt
 >
 > > ## Solution
 > > [This link](https://rmarkdown.rstudio.com/authoring_basics.html) has some helpful basic R Markdown syntax.
-> > To create bullet points, use `-` or `*` on each line
-> > To make something bold, wrap the words in two asterisks: `**`
-> > To make something italic, wrap the words in one asterisk: `*`
-> > To make something bold and italic, wrap the words in three asterisks: `***`
-> > To make a numbered list, use `1.`, `2.`, etc. on each line
-> > To make a hyperlink, wrap the words in square brackets followed by the url in  parentheses `[sentence to link](url)`
+> > * To create bullet points, use `-` or `*` on each line
+> > * To make something bold, wrap the words in two asterisks: `**`
+> > * To make something italic, wrap the words in one asterisk: `*`
+> > * To make something bold and italic, wrap the words in three asterisks: `***`
+> > * To make a numbered list, use `1.`, `2.`, etc. on each line
+> > * To make a hyperlink, wrap the words in square brackets followed by the url in  parentheses `[sentence to link](url)`
 > {: .solution}
 {: .challenge}
 
