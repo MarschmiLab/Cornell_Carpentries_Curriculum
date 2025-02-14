@@ -56,10 +56,8 @@ This makes R a great tool to use for statistics!
 
 > ## Discussion
 >
-> What statistical tests do you typically use when analyzing your data?
-> What software do you use to run these tests?
-> Put them in the Etherpad and describe when you use them.
-> {: .discussion}
+> What statistical tests do you typically use when analyzing your data? What software do you use to run these tests? Put them in the Etherpad and describe when you use them.
+{: .discussion}
 
 ## Limits of our lesson today {#limits-of-our-lesson-today}
 
@@ -81,7 +79,7 @@ When in doubt, talk to your PI, another colleague, or book a consultation throug
 We'll be using the same report which we started in our RMarkdown lesson.
 Please open this document and confirm that the Knit directory is set to "Project Directory".
 
-![](%7B%7B%20page.root%20%7D%7D/fig/r-markdown/knit_dir_proj_dir.png)
+![]({{ page.root }}/fig/r-markdown/knit_dir_proj_dir.png)
 
 Let's scroll to the bottom and make a new header (with two `##`) called "Two-Group Comparisons".
 
@@ -89,7 +87,7 @@ Then, make a new code-chunk called `{r cells_vs_month}`.
 
 So that we're set up to use the tidyverse and `sample_and_taxon` data, click the "Run All Chunks Above" button (highlighted in red below):
 
-![](%7B%7B%20page.root%20%7D%7D/fig/r-markdown/run_all_above.png)
+![]({{ page.root }}/fig/r-markdown/run_all_above.png)
 
 First, let's visualize the comparison we plan on making.
 We want to test if the Phylum Bacteroidota is more abundant in Shallow May vs. Shallow September.
@@ -154,7 +152,7 @@ All statistical tests come with their own important assumptions, which need to b
 We won't have time to cover those assumptions today, however.
 We reiterate that you are responsible for checking the assumptions of your statistical tests!
 
-A t-test is what's called a "parametric" test, which makes several assumptions about the distribution of our data.
+A t-test is what's called a "parametric" test, which makes [several assumptions](https://www.statology.org/t-test-assumptions/) about the distribution of our data.
 Other tests, called "non-parametric" tests, make fewer assumptions about the population from which we sampled our data, and so may be preferred for some datasets.
 To demonstrate how to run a common non-parametric test for two-sample tests, we'll run a "Two-Sample Wilcoxon Test" (this test is also called a "Mann-Whitney Test").
 Moving forward, we'll trust you to create and name your own R chunks.
@@ -167,9 +165,24 @@ wilcox.test(Bacteroidota ~ env_group, data = no_deep)
 
 Notice the similarities in how we specify this test - we use the same formula notation and data argument as in our t-test.
 You can also see that our p-value is larger, though still very small.
-Because they rely on fewer assumptions, non-parametric tests will generally be "less powerful", which means their p-values will be higher compared to parametric tests.
 What type of test is correct for your data is an important consideration.
 When in doubt, consult your PI or a statistician.
+
+> ## Running more t-tests
+>
+> Is there a significant difference between total phosphorus in Shallow May and Shallow September?
+>
+> > ## Solution
+> >
+> > Use a t-test or a Wilcoxon test to compare average total phosphorus between months
+> >
+> > ```{r t-test-challenge}
+> > t.test(total_phosphorus ~ env_group, data = no_deep)
+> > wilcox.test(total_phosphorus ~ env_group, data = no_deep)
+> > ```
+> > Our p-values are all larger than 0.05. As such we do not reject our null hypothesis, and cannot conclude that total phosphorus is different between our two sampling months.
+> {: .solution}
+{: .challenge}
 
 ## Multi-Group Comparisons {#multi-group-comparisons}
 
@@ -191,19 +204,15 @@ If I had four groups, I would instead need to run six t-tests, and at five group
 The number of tests we're running increases rapidly as we add groups to our categorical variable.
 We call all these pairs of tests "multiple comparisons."
 
-The danger of multiple comparisons is that they increase our chances of incorrectly rejecting the null hypothesis, or detecting a significant difference when we shouldn't have.
-Recall that we typically set our p-value threshold at 0.05.
-Now let's say we run 20 unique t-tests, all of which had a p-value of 0.05.
-With these assumptions we'd reject the null hypothesis for all of those tests - even though one of them was likely due to pure chance!
-Our liability to commit this type of error increases as we run more comparisons.
+The danger of multiple comparisons is that they increase our chances of incorrectly rejecting the null hypothesis, or detecting a significant difference when we shouldn't have. When we set our threshold for significance at 0.05, this means that we're okay with a 1 in 20 chance of incorrectly rejecting the null hypothesis. If we run twenty comparisons, and they all had a p-value right under 0.05, we'd expect that we'd reject the null hypothesis incorrectly at least once, just because of how many tests we've run. 
 
 Part of the reason multiple comparisons can be risky is that each test is only looking at a subset of the data and making conclusions only within that subset.
-We can help mitigate the risk from multiple comparisons by first running a test that considers **all** of our observations, before running pairwise tests.
+We can help mitigate the risk from multiple comparisons by first running a test that considers **all** of our observations, before running pairwise tests. We call these tests **omnibus** tests.
 
 ### ANalysis Of VAriance (ANOVA)
 
-One such test is called an Analysis of Variance, or "ANOVA".
-It will consider all the observations across all our three groups, and estimate whether there is at least *one* significant difference in means between our three groups.
+One omnibus test is called an ANalysis Of VAriance, or "ANOVA". You can read about the [assumptions for an ANOVA test here.](https://www.statology.org/one-way-anova/)
+It will consider all the observations across our three groups, and estimate whether there is at least *one* significant difference in the means between our three groups.
 Let's first plot the comparison we plan to make.
 
 ```{r bacteroidota-all}
@@ -224,6 +233,8 @@ An ANOVA is another type of hypothesis test, which is testing these hypotheses:
 
 2.  Alternative Hypothesis: There *is* a difference in Bacteroidota abundances between at least two of our env_groups
 
+Our ANOVA test will use a similar formula notation as our t-test, but its default output does not give us a p-value. To get that information, we'll save our ANOVA output as an object, and then call `summary` on that object.
+
 ```{r bacteroidota-anova}
 
 bact_anova <- aov(Bacteroidota ~ env_group, data = sample_and_taxon)
@@ -233,15 +244,14 @@ summary(bact_anova)
 ```
 
 The key piece of this output is the p-value, which is given underneath "Pr(\>F)": \<2e-16.
-This is the smallest number that R is able to calculate, and means our p-value is very small.
 Hence, we can reject the null hypothesis and conclude that the means of *at least* two groups are different, though we don't yet know which ones.
 This test result gives us confidence to now run pairwise comparisons to find out which groups are significantly different.
-We call these "post-hoc" tests (latin for "after this") because you should only run them *after* a significant result from an ANOVA.
-If our p-value from the ANOVA was greater than 0.05, we would fail to reject the null hypothesis, and continue onto any pairwise tests.
+We call these "post-hoc" tests (latin for "after this") because you should only run them *after* a significant result from an omnibus test.
+If our p-value from the ANOVA was greater than 0.05, we would fail to reject the null hypothesis, and *would not run any pairwise tests*.
 
 ### Post-hoc Tests {#post-hoc-tests}
 
-The test we'll use today is called a Tukey HSD test.
+The test we'll use today is called a Tukey Honest Significant Differences test, often shortened to Tukey HSD test.
 To run this test, we'll use the `bact_anova` object we created.
 
 ```{r tukey-hsd}
@@ -260,26 +270,53 @@ There are similar non-parametric tests for comparing differences across multiple
 In this case, we'll use a Kruskal-Wallis test instead of an ANOVA, and a Dunn's test instead of a Tukey HSD test.
 To run a Dunn's test, we need to install the `FSA` package.
 
-```{r non-parametric-mult-comparisons}
+```{r non-parametric-mult-comparisons, warning = FALSE}
 
 kruskal.test(Bacteroidota ~ env_group, data = sample_and_taxon)
 
 # install.packages("FSA")
+library(FSA)
 
-FSA::dunnTest(Bacteroidota ~ env_group, data = sample_and_taxon)
+dunnTest(Bacteroidota ~ env_group, data = sample_and_taxon)
 
 ```
 
-While the outputs differ slightly, our conclusions (that there are significant differences between at least two groups, and then those groups are Shallow May compared to Deep and Shallow September) remain the same.
+While the outputs differ slightly, our conclusions (that there are significant differences between at least two groups, and that those groups are Shallow May compared to Deep and Shallow September) remain the same.
 
 > ## Adjusted p-values
 >
 > You probably noticed that results from both the Tukey HSD test and Dunn's test included either a "p adj" or "P.adj", which stands for "adjusted p-value".
 > Because making multiple comparisons means we are at a greater risk of incorrectly assuming a significant difference, these tests adjust our p-values to be more strict, to help prevent erroneous conclusions.
-> These means they inflate the p-values, so that they need to have started smaller in order to still fall under our significance threshold (typically 0.05).
 > [There are many ways to adjust p-values](http://www-stat.wharton.upenn.edu/~steele/Courses/956/Resource/MultipleComparision/Writght92.pdf), some of which are more conservative and others which are more confident.
-> What adjustment to use is, like all of the tests we run today, conditional on your data, your research question, and the norms in your field.
-> {: .callout}
+> What adjustment to use, like all of the tests we run today, is conditional on your data, your research question, and the norms in your field.
+{: .callout}
+
+> ## ANOVA Practice
+>
+> Do deep samples have significantly different total_phosphorus compared to our shallow samples?
+>
+> > ## Solution
+> >
+> > Let's begin by running an omnibus test, to see if there are differences in total_phosphorus between at least two groups
+> >
+> > ```{r anova-challenge-phosphorus}
+> > phos_aov <- aov(total_phosphorus ~ env_group, data = sample_and_taxon)
+> > summary(phos_aov)
+> > ```
+> > The p-value is greater than 0.05, meaning we failed to see signficant differences between our three groups. We should not continue on to pairwise tests!
+> {: .solution}
+> Are there significant differences in chlorophyll between our groups? Use non-parametric tests to determine which groups, if any, are significantly different from each other.
+> > ## Solution
+> > ```{r anova-challenge-chlorophyll}
+> > kruskal.test(chlorophyll ~ env_group, data = sample_and_taxon)
+> > ```
+> > We passed our non-parametric omnibus test (Kruskal-Wallis), so we'll continue with a post-hoc Dunn's Test
+> > ```{r anova-challenge-chlorophyll-dunn}
+> > dunnTest(chlorophyll ~ env_group, data = sample_and_taxon)
+> > ```
+> > We find chlorophyll is significantly higher when we compare Deep samples to Shallow samples. However our two shallow groups are not signficiantly different in their chlorophyll levels. 
+> > {: .solution}
+{: .challenge}
 
 ## Correlations {#correlations}
 
@@ -302,7 +339,7 @@ sample_and_taxon %>%
 
 ```
 
-Let's run a correlation test first, and then discuss the interpretation.
+Let's run a correlation test first, and then discuss the interpretation. [You can read about our assumptions here](https://www.statology.org/pearson-correlation-assumptions/)
 We'll use the function `cor.test`, and provide it two columns from our dataframe between which we want to calculate the correlation.
 
 ```{r correlation}
@@ -354,6 +391,33 @@ cor.test(sample_and_taxon$cells_per_ml, sample_and_taxon$temperature,
 
 The Spearman coefficient is called $\rho$ or "rho", is 0.9205231, and was also significantly different from zero (p \< 2.2e-16).
 
+```{r}
+
+
+
+```
+
+> ## Testing Other Correlations
+>
+> Let's test the correlation between some other variables. For example, how does the abundance of Cyanobacteria correlate to depth? 
+>
+> > ## Solution
+> >
+> > ```{r cor-cyano-depth}
+> > cor.test(sample_and_taxon$Cyanobacteria, sample_and_taxon$depth)
+> > ```
+> > We see a weak to moderate, negative correlation between Cyanobacteria and depth. This means that as the depth of our sample increases, our Cyanobacterial abundances tend to decrease. Though the strength of the correlation isn't exceptionally strong, it is significantly different from zero (p = 0.003378). 
+> {: .solution}
+> 
+> Now test the correlation between total_nitrogen and depth
+> > ## Solution
+> > ```{r cor-nit-depth}
+> > cor.test(sample_and_taxon$total_nitrogen, sample_and_taxon$depth)
+> > ```
+> > There is a weak, positive correlation (0.253), but we don't have sufficient evidence to conclude this correlation is significantly different from zero.
+> > {: .solution}
+{: .challenge}
+
 ## Linear Regression {#linear-regression}
 
 [*Back to top*](#contents)
@@ -375,7 +439,10 @@ sample_and_taxon %>%
 By fitting a linear model to our data, we answer the question: "When temperature increases by one degree, how much does cell abundance generally increase?".
 We're estimating *coefficients* in a linear models given by:
 
-$$y = \beta_0 + \beta_1x$$ $\beta_0$ corresponds to the *intercept*, or the value of our dependent variable ($y$) when our independent variable ($x$) is zero.
+$$y = \beta_0 + \beta_1x$$ 
+
+$\beta_0$ corresponds to the *intercept*, or the value of our dependent variable ($y$) when our independent variable ($x$) is zero.
+
 $\beta_1$ corresponds to the *slope*, which is the amount our dependent variable ($y$) increases when our independent variable ($x$) increases by one unit.
 
 For our cells vs. temperature model our linear model will be:
@@ -416,8 +483,8 @@ sample_and_taxon %>%
 
 ```
 
-One of the statistical assumptions of linear regression is that the residuals are normally distributed - here, we would expect the Median of the residuals to be close to zero, and the quartiles of the residuals to be symmetrical around zero.
-We can plot our residuals:
+One of the statistical assumptions of linear regression is that the residuals are normally distributed. [You can read about about other assumptions of linear regression here](https://www.statology.org/linear-regression/). We would expect the Median of the residuals to be close to zero, and the quartiles of the residuals to be symmetrical around zero. This output implies that our residuals might not be very normal.
+We can plot our residuals to check:
 
 ```{r plot-residuals}
 
@@ -430,7 +497,7 @@ res_df %>%
 
 ```
 
-These residuals don't look very normal, which may indicate that a linear model isn't the best fit for these data.
+These residuals are not normally distributed, which may indicate that a linear model isn't the best fit for these data.
 There are other diagnostic plots we could make to investigate the distribution of the residuals, and other relationships (like logarithmic or polynomial models) which could be a better fit, but we won't discuss those today.
 
 The next section in "Coefficients".
@@ -442,22 +509,22 @@ This means that when the temperature rises by 1°, our average cells per ml rise
 
 The next three columns of the Coefficients section help us estimate how confident we are in our model coefficients.
 We'll focus on the `Pr(>|t|)` column.
-This is the p-value that came from...hypothesis tests!
-The hypothesis that we were testing for each of the coefficients are as follows:
+These are p-values that came from...hypothesis tests!
+The hypotheses that we were testing for each of the coefficients are as follows:
 
 1.  Null Hypothesis: The value of the coefficient is zero.
     As temperature changes, there is no predictable change in cell abundance.
 
-2.  Alternative Hypothesis: The value of the coefficient is \*not\*\* zero
+2.  Alternative Hypothesis: The value of the coefficient is **not** zero
 
-Because both of our terms have very small p-values, we have high confidence in these coefficients.
+Because both of our terms have very small p-values, we have high confidence that these coefficients are not zero.
 Especially for the slope, this allows us to conclude that there is a relationship between temperature and cell abundance.
 
 Residual standard error is the *average residual*, which is the distance from each of our observations to our line of best fit.
 This is nice, because it's in the same units as our dependent variable (cells/ml).
 So we can say something like "on average, our observations differed from our model by 791,200 cells/ml). Whether this is an acceptable amount of error depends on the system and variable we're studying. Is 791,200 cells/mL a lot? Discuss.
 
-We then have two measures of the R-squared ($R^2$) value.
+We then have two measures of the R-squared ($R^2$) value, also called the *coefficient of determination*.
 The $R^2$ represents the percentage of variance in our dependent variable (cells/ml) which we can explain using our independent variable (temperature).
 The $R^2$ ranges from 0 (no variance explained) to 1 (all our observations fall perfectly on our line of best fit).
 The Adjusted R-squared becomes more important as we add additional predictors (independent variables) to our model, which is called "multiple regression", and which we won't discuss today.
@@ -477,17 +544,22 @@ Because the p-value is very small, we can reject our null hypothesis and conclud
 > All these different metrics might feel overwhelming - sometimes you just want the slope!
 > However the benefit of using a program like R is that you can be much more discerning about the quality of your linear regression.
 > These considerations become increasingly important as your models become more complex and difficult to interpret.
-> {: .callout}
+{: .callout}
+
+> ## Statistical Significance vs. Practical Significance
+>
+> Throughout this lesson, we have focused on determining whether a relationship is *statistically* significant. Statistical significance generally depends on both the magnitude of the relationship (e.g., differences in means or linear correlation) as well as our sample size. What statistics does not tell us is whether the differences we observe are meaningful in the real world. At very large sample sizes, we may be discern differences between groups that are *statistically significant*, but so small as to be meaningless. Similarly, with a large sample size our linear model may be *statistically significant*, but with large residuals and a low coefficient of determination. How useful or applicable this model actually is in predicting relationships in the real world requires our own judgement.
+{: .caution}
 
 ## Bonus: Cleaning Stats Output
 
 [*Back to top*](#contents)
 
-You may have noticed the outputs of our statistical tests often hold multiple pieces of information.
+You may have noticed the outputs of our statistical tests hold multiple pieces of information.
 This can include group means, confidence intervals, p-values, and coefficients.
 In order to store all these different pieces of information, many of these tests return objects called "lists", which are good at holding multiple types of information.
 For beginning coders, however, lists (and the data they hold) can be difficult to parse.
-Even experienced coders often want simpler outputs from these statistical tests, to then include in their results.
+Even experienced coders often want simpler outputs from these statistical tests, to then include in their results or incorporate into larger workflows. 
 
 A favorite package of ours is called `broom`, which helps simplify the outputs of statistical tests to the most pertinent information.
 Let's first install `broom`.
@@ -551,167 +623,119 @@ Once you're done, *add* your report to your Git repo, *commit* those changes, an
 If you feel comfortable, post a link to the repo on the Etherpad, and [change your repo's settings to **Public**](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility#changing-a-repositorys-visibility), so that others in the class can admire what you've accomplished!
 
 ### Bonus Exercises
+_[Back to top](#contents)_
 
-[*Back to top*](#contents)
-
-[1] The very first step is to read in the sample_and_taxon dataset, so do that first!
-Also load the `tidyverse` package.
+[1] The very first step is to read in the sample_and_taxon dataset, so do that first! Also load the `tidyverse` package.
 
 > ## Solution
->
 > ```{r}
 > library(tidyverse)
 > sample_and_taxon <- read_csv('data/sample_and_taxon.csv')
 > ```
->
-> {: .solution}
+{: .solution}
 
 #### Investigating nutrients and cell density
+_[Back to top](#contents)_
 
-[*Back to top*](#contents)
-
-[2] Make a scatter plot of total_nitrogen vs. cells_per_ml, separated into a plot for each env_group.
-**Hint:** you can use `facet_wrap(~column_name)` to separate into different plots based on that column.
+[2] Make a scatter plot of total_nitrogen vs. cells_per_ml, separated into a plot for each env_group. **Hint:** you can use `facet_wrap(~column_name)` to separate into different plots based on that column.
 
 > ## Solution
->
 > ```{r}
 > ggplot(sample_and_taxon, aes(x=total_nitrogen,y=cells_per_ml)) +
 > geom_point() +
 > facet_wrap(~env_group)
 > ```
->
-> {: .solution}
+{: .solution}
 
-[3] It seems like there is an outlier in Shallow_May with very high nitrogen levels.
-What is this sample?
-Use a combination of `filter` and `arrange` to find out.
+[3] It seems like there is an outlier in Shallow_May with very high nitrogen levels. What is this sample? Use a combination of `filter` and `arrange` to find out.
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>% 
 >  filter(env_group == "Shallow_May") %>% 
 >  arrange(desc(total_nitrogen))
 > ```
->
-> {: .solution}
+{: .solution}
 
-[4] Where was this sample again?
-Let's look at a map:
+[4] Where was this sample again? Let's look at a map:
 
 <img src="{{ page.root }}/fig/r-plotting/station_map.png" width="600"/>
 
-Wow!
-This sample is right outside of Toronto.
+Wow! This sample is right outside of Toronto.
 
-We also see that Shallow September has four strange points, with high nitrogen and low cell counts.
-Let's use a new geom, `geom_text` to figure out what those samples are (this might take some googling!).
-Also, let's use `filter` to only plot samples from "Shallow_September".
+We also see that Shallow September has four strange points, with high nitrogen and low cell counts. Let's use a new geom, `geom_text` to figure out what those samples are (this might take some googling!). Also, let's use `filter` to only plot samples from "Shallow_September".
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   filter(env_group == "Shallow_September") %>%
 >   ggplot(aes(x = total_nitrogen, y = cells_per_ml)) + 
 >   geom_text(aes(label = sample_id))
 > ```
->
-> {: .solution}
+{: .solution}
 
-Interesting...these are mostly from Station 35.
-I wonder why these stations have such high nitrogen and such low cell abundances?
+Interesting...these are mostly from Station 35. I wonder why these stations have such high nitrogen and such low cell abundances? 
 
 > ## Solution
->
-> ![](%7B%7B%20page.root%20%7D%7D/fig/r-markdown/upwelling_surface.png) Here, I show surface temperatures across the lake in September.
-> Station 35 was on the edge an upwelling event, where cold, nutrient rich water is pulled to the surface of the lake!
-> Stn.
-> 38, which was smack dab in the upwelling itself, was so similar to deep samples that its env_group is "Deep" rather than "Shallow_September".
-> {: .solution}
+> ![]({{ page.root }}/fig/r-markdown/upwelling_surface.png)
+> Here, I show surface temperatures across the lake in September. Station 35 was on the edge an upwelling event, where cold, nutrient rich water is pulled to the surface of the lake! Stn. 38, which was smack dab in the upwelling itself, was so similar to deep samples that its env_group is "Deep" rather than "Shallow_September".
+{: .solution}
 
-If you want to investigate this phenomenon further, spend time analyzing the relative composition of Phyla in these upwelling stations compared to the rest of Shallow_September.
-If you want to go further, you can use the buoy_data from the Niagara and South Shore buoys to see if you can detect when this upwelling event began.
+If you want to investigate this phenomenon further, spend time analyzing the relative composition of Phyla in these upwelling stations compared to the rest of Shallow_September. If you want to go further, you can use the buoy_data from the Niagara and South Shore buoys to see if you can detect when this upwelling event began.
 
 #### Comparing Dominant Phylum Across Environmental Groups
+_[Back to top](#contents)_
 
-[*Back to top*](#contents)
+[6] We want to know which Phyla tend to live in which environments. Previously, we focused on Chloroflexi, and found it preferred Deep environments. What if we want to look at the relative abundances of all our Phyla between env_groups at once?
 
-[6] We want to know which Phyla tend to live in which environments.
-Previously, we focused on Chloroflexi, and found it preferred Deep environments.
-What if we want to look at the relative abundances of all our Phyla between env_groups at once?
-
-First, let's remind ourselves how we looked at Chloroflexi across env_groups.
-Make a boxplot with env_group on the x-axis, and Chloroflexi relative abundance on the y axis.
+First, let's remind ourselves how we looked at Chloroflexi across env_groups. Make a boxplot with env_group on the x-axis, and Chloroflexi relative abundance on the y axis.
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   ggplot(aes(x = env_group, y = Chloroflexi)) + 
 >   geom_boxplot()
 > ```
->
-> {: .solution}
+{: .solution}
 
-[7] Now, we want to analyze multiple Phyla at once.
-Because our taxa abundances are in wide format, we can't use multiple Phyla in a single ggplot.
-As such, we will need to convert our data to long format.
-Using `pivot_longer`, convert the columns containing our Phyla abundances from wide to long.
+[7] Now, we want to analyze multiple Phyla at once. Because our taxa abundances are in wide format, we can't use multiple Phyla in a single ggplot. As such, we will need to convert our data to long format. Using `pivot_longer`, convert the columns containing our Phyla abundances from wide to long.
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   pivot_longer(cols = Proteobacteria:Cyanobacteria, names_to = "Phylum", values_to = "Abundance")
 > ```
->
-> {: .solution}
+{: .solution}
 
-You can see that we've now made size rows per sample, one for each Phylum.
-This does mean that our metadata has been duplicated, which is okay right now.
+You can see that we've now made size rows per sample, one for each Phylum. This does mean that our metadata has been duplicated, which is okay right now.
 
-Now, our data is in the correct format for plotting with ggplot.
-In the end, we want a plot that shows, for each env_group, the relative abundance of each Phylum.
-There are actually many plotting styles we could use to answer that question!
-We'll try out three.
+Now, our data is in the correct format for plotting with ggplot. In the end, we want a plot that shows, for each env_group, the relative abundance of each Phylum. There are actually many plotting styles we could use to answer that question! We'll try out three. 
 
-[8] Pipe your long dataframe into a boxplot with env_group on the x-axis, and Abundance on the y-axis.
-Use fill to differentiate different Phyla
+[8] Pipe your long dataframe into a boxplot with env_group on the x-axis, and Abundance on the y-axis. Use fill to differentiate different Phyla
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   pivot_longer(cols = Proteobacteria:Cyanobacteria, names_to = "Phylum", values_to = "Abundance") %>%
 >   ggplot(aes(x = env_group, y = Abundance, fill = Phylum)) + 
 >   geom_boxplot()
 > ```
->
-> {: .solution}
+{: .solution}
 
-[9] Okay, what does this plot tell us?
-Make sure to write a quick summary in your report.
-Next, make a new plot, where Phylum is now on the x-axis, and the fill is determined by the env_group.
+[9] Okay, what does this plot tell us? Make sure to write a quick summary in your report. Next, make a new plot, where Phylum is now on the x-axis, and the fill is determined by the env_group.
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   pivot_longer(cols = Proteobacteria:Cyanobacteria, names_to = "Phylum", values_to = "Abundance") %>%
 >   ggplot(aes(x = Phylum, y = Abundance, fill = env_group)) + 
 >   geom_boxplot()
 > ```
->
-> {: .solution}
+{: .solution}
 
-[10] Which do you prefer?
-Which do you feel is easier to understand?
-Finally, let's use faceting, rather than fill, to separate out Phyla
+[10] Which do you prefer? Which do you feel is easier to understand? Finally, let's use faceting, rather than fill, to separate out Phyla
 
 > ## Solution
->
 > ```{r}
 > sample_and_taxon %>%
 >   pivot_longer(cols = Proteobacteria:Cyanobacteria, names_to = "Phylum", values_to = "Abundance") %>%
@@ -719,22 +743,16 @@ Finally, let's use faceting, rather than fill, to separate out Phyla
 >   geom_boxplot() + 
 >   facet_wrap(~Phylum)
 > ```
->
-> {: .solution}
+{: .solution}
 
-If you want to investigate this dataset further, consider changing the x-axis to a continuous variable, like temperature, rather than the categorical env_group.
-Can you find associations between different environmental conditions and the abundance of specific taxa?
+If you want to investigate this dataset further, consider changing the x-axis to a continuous variable, like temperature, rather than the categorical env_group. Can you find associations between different environmental conditions and the abundance of specific taxa?
 
 ### Bonus-Bonus: Let your creativity shine!
 
-If you've gotten this far, feel free to let your creativity shine.
-Consider:
+If you've gotten this far, feel free to let your creativity shine. Consider:
 
-1.  Make your plots beautiful and professional:
-
--   Alter axis labels
--   Use `theme` to change the font size of axis and legend text
--   Using or creating a beautiful palette from a new package
-
-2.  Render your report in different formats, including pdf or docx
-3.  Find a partner and use Github to collaborate on a shared RMarkdown document.
+1. Making your plots beautiful and professional:
+ - Altering axis labels
+ - Using `theme` to change the font size of axis and legend text
+ - Using or creating a beautiful palette from a new package
+3. Finding a partner and use Github to collaborate on a shared RMarkdown document.
