@@ -484,6 +484,7 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > {: .output}
 > > The p-value is greater than 0.05, meaning we failed to see signficant differences between our three groups. We should not continue on to pairwise tests!
 > {: .solution}
+> 
 > Are there significant differences in chlorophyll between our groups? Use non-parametric tests to determine which groups, if any, are significantly different from each other.
 > > ## Solution
 > > 
@@ -541,6 +542,7 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > {: .output}
 > > We find chlorophyll is significantly higher when we compare Deep samples to Shallow samples. However our two shallow groups are not signficiantly different in their chlorophyll levels. 
 > > {: .solution}
+>
 {: .challenge}
 
 ## Correlations {#correlations}
@@ -726,6 +728,7 @@ The Spearman coefficient is called $\rho$ or "rho", is 0.9205231, and was also s
 > > {: .output}
 > > There is a weak, positive correlation (0.253), but we don't have sufficient evidence to conclude this correlation is significantly different from zero.
 > > {: .solution}
+>
 {: .challenge}
 
 ## Linear Regression {#linear-regression}
