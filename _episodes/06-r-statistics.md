@@ -349,15 +349,21 @@ Kruskal-Wallis chi-squared = 48.968, df = 2, p-value = 2.326e-11
 ~~~
 {: .output}
 
+We have a significant p-value from our omnibus test. Let's continue with a pairwise test.
 
 
 ~~~
-# We have a significant p-value from our omonibus test
-
 # install.packages("FSA")
 library(FSA)
 ~~~
 {: .language-r}
+
+
+
+~~~
+Warning: package 'FSA' was built under R version 4.3.3
+~~~
+{: .warning}
 
 
 
@@ -373,6 +379,13 @@ library(FSA)
 dunnTest(Bacteroidota ~ env_group, data = sample_and_taxon)
 ~~~
 {: .language-r}
+
+
+
+~~~
+Warning: env_group was coerced to a factor.
+~~~
+{: .warning}
 
 
 
@@ -431,10 +444,12 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > Residuals   68 201.04   2.956               
 > > ~~~
 > > {: .output}
+> > {: .source}
 > > The p-value is greater than 0.05, meaning we failed to see signficant differences between our three groups. We should not continue on to pairwise tests!
 > {: .solution}
 > 
 > Are there significant differences in chlorophyll between our groups? Use non-parametric tests to determine which groups, if any, are significantly different from each other.
+>
 > > ## Solution
 > > 
 > > ~~~
@@ -489,6 +504,7 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > 3 Shallow_May - Shallow_September  0.5897025 5.553901e-01 5.553901e-01
 > > ~~~
 > > {: .output}
+> > {: .source}
 > > We find chlorophyll is significantly higher when we compare Deep samples to Shallow samples. However our two shallow groups are not signficiantly different in their chlorophyll levels. 
 > > {: .solution}
 >
@@ -607,7 +623,7 @@ sample estimates:
 ~~~
 {: .output}
 
-The Spearman coefficient is called $\rho$ or "rho", is 0.9205231, and was also significantly different from zero (p \< 2.2e-16).
+The Spearman coefficient is called ρ or "rho", is 0.9205231, and was also significantly different from zero (p \< 2.2e-16).
 
 > ## Testing Other Correlations
 >
@@ -637,10 +653,12 @@ The Spearman coefficient is called $\rho$ or "rho", is 0.9205231, and was also s
 > > -0.3433082 
 > > ~~~
 > > {: .output}
+> > {: .source}
 > > We see a weak to moderate, negative correlation between Cyanobacteria and depth. This means that as the depth of our sample increases, our Cyanobacterial abundances tend to decrease. Though the strength of the correlation isn't exceptionally strong, it is significantly different from zero (p = 0.003378). 
 > {: .solution}
 > 
 > Now test the correlation between total_nitrogen and depth
+> 
 > > ## Solution
 > > 
 > > ~~~
@@ -664,6 +682,7 @@ The Spearman coefficient is called $\rho$ or "rho", is 0.9205231, and was also s
 > > 0.2529805 
 > > ~~~
 > > {: .output}
+> > {: .source}
 > > There is a weak, positive correlation (0.253), but we don't have sufficient evidence to conclude this correlation is significantly different from zero.
 > > {: .solution}
 >
@@ -695,15 +714,14 @@ ggplot(data = sample_and_taxon) +
 
 By fitting a linear model to our data, we answer the question: "When temperature increases by one degree, how much does cell abundance generally increase?". We're estimating *coefficients* in a linear model given by:
 
-$$y = \beta_0 + \beta_1x$$ 
+*y = β<sub>0</sub> + β<sub>1</sub>x*
 
-$\beta_0$ corresponds to the *intercept*, or the value of our dependent variable ($y$) when our independent variable ($x$) is zero.
-
-$\beta_1$ corresponds to the *slope*, which is the amount our dependent variable ($y$) increases when our independent variable ($x$) increases by one unit.
-
+*β<sub>0</sub>* corresponds to the *intercept*, or the value of our dependent variable (*y*) when our independent variable (x) is zero.
+*β<sub>1</sub>* corresponds to the *slope*, which is the amount our dependent variable
+(*y*) increases when our independent variable (*x*) increases by one unit.
 For our cells vs. temperature model our linear model will be:
 
-$$Cells = \beta_0 + \beta_1Temp$$
+*Cells = β<sub>0</sub> + β<sub>1</sub>Temp*
 
 Now let's fit our linear model. We're going to use the `lm` function, and similar formula notation as we used for our t-tests and ANOVAs.
 
@@ -777,11 +795,11 @@ ggplot(data = res_df) +
 
 These residuals are not normally distributed, which may indicate that a linear model isn't the best fit for these data. There are other diagnostic plots we could make to investigate the distribution of the residuals, and other relationships (like logarithmic or polynomial models) which could be a better fit, but we won't discuss those today.
 
-The next section in "Coefficients". These are the values for $\beta_0$ and $\beta_1$ that we've estimated, which is under the `Estimate` column.
+The next section in "Coefficients". These are the values for *β<sub>0</sub>* and *β<sub>1</sub>* that we've estimated, which is under the `Estimate` column.
 
-The `(Intercept)`, or $\beta_0$, is 1,389,626 cells. This means that when our temperatures are zero, we would still expect there to be 1,389,626 cells per ml.
+The `(Intercept)`, or *β<sub>0</sub>*, is 1,389,626 cells. This means that when our temperatures are zero, we would still expect there to be 1,389,626 cells per ml.
 
-The slope/$\beta_1$/`temperature` term is 254,313 cells/ml. This means that when the temperature rises by 1°, our average cells per ml rises by 254,313 cells per ml.
+The slope *β<sub>1</sub>* `temperature` term is 254,313 cells/ml. This means that when the temperature rises by 1°, our average cells per ml rises by 254,313 cells per ml.
 
 The next three columns of the Coefficients section help us estimate how confident we are in our model coefficients. We'll focus on the `Pr(>|t|)` column. These are p-values that came from...hypothesis tests! The hypotheses that we were testing for each of the coefficients are as follows:
 
@@ -799,7 +817,7 @@ Because both of our terms have very small p-values, we have high confidence that
 
 Residual standard error is the *average residual*, which is the distance from each of our observations to our line of best fit. This is nice, because it's in the same units as our dependent variable (cells/ml). So we can say something like "on average, our observations differed from our model by 791,200 cells/ml). Whether this is an acceptable amount of error depends on the system and variable we're studying. Do we think 791,200 cells/mL is a lot? 
 
-We then have two measures of the R-squared ($R^2$) value, also called the *coefficient of determination*. The Multiple $R^2$ represents the percentage of variance in our dependent variable (cells/ml) which we can explain using our independent variable (temperature). The $R^2$ ranges from 0 (no variance explained) to 1 (all our observations fall perfectly on our line of best fit). The Adjusted R-squared becomes more important as we add additional predictors (independent variables) to our model, which is called "multiple regression", and which we won't discuss today. Our $R^2$ is 0.8122, which implies our model fits the data quite well (we can explain over 80% of the variance in cell abundances via temperature).
+We then have two measures of the R-squared (R<sup>2</sup>) value, also called the *coefficient of determination*. The Multiple R<sup>2</sup> represents the percentage of variance in our dependent variable (cells/ml) which we can explain using our independent variable (temperature). The R<sup>2</sup> ranges from 0 (no variance explained) to 1 (all our observations fall perfectly on our line of best fit). The Adjusted R-squared becomes more important as we add additional predictors (independent variables) to our model, which is called "multiple regression", and which we won't discuss today. Our R<sup>2</sup> is 0.8122, which implies our model fits the data quite well (we can explain over 80% of the variance in cell abundances via temperature).
 
 Finally, the last line contains the outputs of *another* hypothesis test! This test's hypotheses are:
 
