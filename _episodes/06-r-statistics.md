@@ -421,6 +421,7 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > What adjustment to use, like all of the tests we run today, is conditional on your data, your research question, and the norms in your field.
 {: .callout}
 
+
 > ## ANOVA Practice
 >
 > Do deep samples have significantly different total_phosphorus compared to our shallow samples?
@@ -447,7 +448,6 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > {: .source}
 > > The p-value is greater than 0.05, meaning we failed to see signficant differences between our three groups. We should not continue on to pairwise tests!
 > {: .solution}
-> 
 > Are there significant differences in chlorophyll between our groups? Use non-parametric tests to determine which groups, if any, are significantly different from each other.
 >
 > > ## Solution
@@ -505,9 +505,8 @@ While the outputs differ slightly, our conclusions (that there are significant d
 > > ~~~
 > > {: .output}
 > > {: .source}
-> > We find chlorophyll is significantly higher when we compare Deep samples to Shallow samples. However our two shallow groups are not signficiantly different in their chlorophyll levels. 
-> > {: .solution}
->
+> > We find chlorophyll is significantly higher when we compare Deep samples to Shallow samples. However our two shallow groups are not signficiantly different in their chlorophyll levels.
+> {: .solution}
 {: .challenge}
 
 ## Correlations {#correlations}
