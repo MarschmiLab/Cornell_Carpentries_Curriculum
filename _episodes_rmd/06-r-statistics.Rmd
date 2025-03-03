@@ -225,7 +225,7 @@ kruskal.test(Bacteroidota ~ env_group, data = sample_and_taxon)
 
 We have a significant p-value from our omnibus test. Let's continue with a pairwise test.
 
-```{r dunntest}
+```{r dunntest, warning = FALSE, message = FALSE}
 
 # install.packages("FSA")
 library(FSA)
@@ -405,7 +405,7 @@ The first line gives the code which initially created the model.
 
 The second section, "Residuals" describes the differences between our actual observed values of cells compare to our predicted values of cells. You can think of each "residual" as the vertical distance of our observation from our line of best fit, here shown in red:
 
-```{r cells-vs-temp-reg-res, echo = FALSE}
+```{r cells-vs-temp-reg-res, echo = FALSE, message = FALSE}
 
 ggplot(sample_and_taxon) +
     aes(x = temperature, y = cells_per_ml) + 
@@ -614,14 +614,6 @@ First, let's remind ourselves how we looked at Chloroflexi across env_groups. Ma
 
 [7] Is Chloroflexi significantly different between our env_groups? Run statistical tests to determine where Chloroflexi is significantly higher. 
 
-
-```{r te}
-chlor_aov <- aov(Chloroflexi ~ env_group, data = sample_and_taxon)
-
-summary(chlor_aov)
-
-TukeyHSD(chlor_aov)
-```
 > ## Solution
 > ```{r}
 > chlor_aov <- aov(Chloroflexi ~ env_group, data = sample_and_taxon)

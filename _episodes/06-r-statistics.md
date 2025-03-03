@@ -355,51 +355,10 @@ We have a significant p-value from our omnibus test. Let's continue with a pairw
 ~~~
 # install.packages("FSA")
 library(FSA)
-~~~
-{: .language-r}
 
-
-
-~~~
-Warning: package 'FSA' was built under R version 4.3.3
-~~~
-{: .warning}
-
-
-
-~~~
-## FSA v0.9.6. See citation('FSA') if used in publication.
-## Run fishR() for related website and fishR('IFAR') for related book.
-~~~
-{: .output}
-
-
-
-~~~
 dunnTest(Bacteroidota ~ env_group, data = sample_and_taxon)
 ~~~
 {: .language-r}
-
-
-
-~~~
-Warning: env_group was coerced to a factor.
-~~~
-{: .warning}
-
-
-
-~~~
-Dunn (1964) Kruskal-Wallis multiple comparison
-~~~
-{: .output}
-
-
-
-~~~
-  p-values adjusted with the Holm method.
-~~~
-{: .output}
 
 
 
@@ -761,12 +720,6 @@ The first line gives the code which initially created the model.
 
 The second section, "Residuals" describes the differences between our actual observed values of cells compare to our predicted values of cells. You can think of each "residual" as the vertical distance of our observation from our line of best fit, here shown in red:
 
-
-~~~
-`geom_smooth()` using formula = 'y ~ x'
-~~~
-{: .output}
-
 <img src="../fig/rmd-06-cells-vs-temp-reg-res-1.png" width="540" style="display: block; margin: auto;" />
 
 One of the statistical assumptions of linear regression is that the residuals are normally distributed. [You can read about about other assumptions of linear regression here](https://www.statology.org/linear-regression/). We would expect the Median of the residuals to be close to zero, and the quartiles of the residuals to be symmetrical around zero. This output implies that our residuals might not be very normal.
@@ -1099,48 +1052,6 @@ First, let's remind ourselves how we looked at Chloroflexi across env_groups. Ma
 
 [7] Is Chloroflexi significantly different between our env_groups? Run statistical tests to determine where Chloroflexi is significantly higher. 
 
-
-
-~~~
-chlor_aov <- aov(Chloroflexi ~ env_group, data = sample_and_taxon)
-
-summary(chlor_aov)
-~~~
-{: .language-r}
-
-
-
-~~~
-            Df Sum Sq Mean Sq F value Pr(>F)    
-env_group    2 0.3478 0.17389   140.1 <2e-16 ***
-Residuals   68 0.0844 0.00124                   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-~~~
-{: .output}
-
-
-
-~~~
-TukeyHSD(chlor_aov)
-~~~
-{: .language-r}
-
-
-
-~~~
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = Chloroflexi ~ env_group, data = sample_and_taxon)
-
-$env_group
-                                     diff        lwr         upr   p adj
-Shallow_May-Deep              -0.12005680 -0.1450435 -0.09507013 0.0e+00
-Shallow_September-Deep        -0.17162112 -0.1966078 -0.14663445 0.0e+00
-Shallow_September-Shallow_May -0.05156432 -0.0754399 -0.02768873 6.5e-06
-~~~
-{: .output}
 > ## Solution
 > 
 > ~~~
