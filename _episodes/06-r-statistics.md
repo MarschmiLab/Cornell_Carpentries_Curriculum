@@ -144,7 +144,7 @@ sample estimates:
 ~~~
 {: .output}
 
-There is a lot of output here! The main point we'll focus on today is the p-value: 9.503e-14, or 9.503x10^-14^. People typically set their threshold for "significant" p-values at 0.05.
+There is a lot of output here! The main point we'll focus on today is the p-value: 9.503e-14, or 9.503x10<sup>-14</sup>. People typically set their threshold for "significant" p-values at 0.05.
 In this case, as our p-value is less than 0.05, we'll reject the null hypothesis.
 
 In our document, let's write our interpretation of our statistical test. We can now say:
