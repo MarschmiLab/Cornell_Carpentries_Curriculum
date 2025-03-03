@@ -360,8 +360,7 @@ The Spearman coefficient is called ρ or "rho", is 0.9205231, and was also signi
 > > ```
 > > {: .source}
 > > There is a weak, positive correlation (0.253), but we don't have sufficient evidence to conclude this correlation is significantly different from zero.
-> > {: .solution}
->
+> {: .solution}
 {: .challenge}
 
 ## Linear Regression {#linear-regression}
